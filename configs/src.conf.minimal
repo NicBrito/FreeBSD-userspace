@@ -1,0 +1,78 @@
+# src.conf.minimal - Minimal configuration for FreeBSD userspace build
+#
+# This file optimizes the build by removing unnecessary components,
+# keeping only the userspace essentials.
+#
+# To use: make SRCCONF=/path/to/src.conf.minimal buildworld
+
+# === DISABLED COMPONENTS ===
+
+# Bootloader and boot components (not needed for userspace)
+WITHOUT_BOOT=yes
+WITHOUT_BOOTPARAMD=yes
+WITHOUT_BOOTPD=yes
+
+# Kernel and modules (explicitly removed)
+WITHOUT_KERNEL_SYMBOLS=yes
+
+# Documentation (to reduce size)
+WITHOUT_MAN=yes
+WITHOUT_MAN_UTILS=yes
+WITHOUT_DOCS=yes
+WITHOUT_INFO=yes
+
+# Optional network components
+WITHOUT_INET6=yes
+WITHOUT_BLUETOOTH=yes
+WITHOUT_WIRELESS=yes
+WITHOUT_WPA_SUPPLICANT_EAPOL=yes
+
+# Games and entertainment
+WITHOUT_GAMES=yes
+
+# Graphics components
+WITHOUT_X11=yes
+
+# Advanced debug tools (to reduce size)
+WITHOUT_DEBUG_FILES=yes
+WITHOUT_CTF=yes
+
+# Less essential components
+WITHOUT_CALENDAR=yes
+WITHOUT_TALK=yes
+WITHOUT_FINGER=yes
+WITHOUT_FTP=yes
+WITHOUT_TELNET=yes
+WITHOUT_TIMED=yes
+
+# === ENABLED COMPONENTS (essential) ===
+
+# File system and basic utilities
+WITH_FILE=yes
+WITH_GZIP=yes
+WITH_TAR=yes
+
+# Shell and basic utilities
+WITH_CSH=yes
+WITH_SH=yes
+
+# Essential network tools
+WITH_INET=yes
+WITH_NETCAT=yes
+WITH_PING=yes
+
+# Essential libraries
+WITH_DYNAMICROOT=yes
+
+# System utilities
+WITH_SYSLOGD=yes
+WITH_CRON=yes
+
+# === OPTIMIZATIONS ===
+
+# Faster build
+WITHOUT_PROFILE=yes
+WITHOUT_TESTS=yes
+
+# Reduce memory usage during build
+WITHOUT_LIB32=yes

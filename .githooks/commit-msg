@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#
+# commit-msg hook - Validates commit messages according to Conventional Commits
+# https://www.conventionalcommits.org/
+#
+
+set -euo pipefail
+
+# Color codes for output
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
+
+# Get the commit message
+commit_regex='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?!?:.{1,50}'
+merge_regex='^Merge '
+revert_regex='^Revert '
+
+commit_message="$(cat "$1")"
+
+error() {
+    echo -e "${RED}✗ Commit message validation failed!${NC}" >&2
+    echo -e "${YELLOW}Your commit message:${NC}" >&2
+    echo -e "${BLUE}${commit_message}${NC}" >&2
+    echo "" >&2
+}
+
+success() {
+    echo -e "${GREEN}✓ Commit message is valid!${NC}" >&2
+}
+
+show_format() {
+    echo -e "${YELLOW}Conventional Commit format:${NC}" >&2
+    echo -e "${BLUE}<type>[optional scope]: <description>${NC}" >&2
+    echo "" >&2
+    echo -e "${YELLOW}Valid types:${NC}" >&2
+    echo -e "  ${BLUE}feat${NC}     - A new feature" >&2
+    echo -e "  ${BLUE}fix${NC}      - A bug fix" >&2
+    echo -e "  ${BLUE}docs${NC}     - Documentation only changes" >&2
+    echo -e "  ${BLUE}style${NC}    - Code style changes (formatting, etc.)" >&2
+    echo -e "  ${BLUE}refactor${NC} - Code refactoring" >&2
+    echo -e "  ${BLUE}perf${NC}     - Performance improvements" >&2
+    echo -e "  ${BLUE}test${NC}     - Adding or updating tests" >&2
+    echo -e "  ${BLUE}build${NC}    - Build system or dependency changes" >&2
+    echo -e "  ${BLUE}ci${NC}       - CI/CD configuration changes" >&2
+    echo -e "  ${BLUE}chore${NC}    - Other changes (maintenance tasks)" >&2
+    echo -e "  ${BLUE}revert${NC}   - Reverts a previous commit" >&2
+    echo "" >&2
+    echo -e "${YELLOW}Examples:${NC}" >&2
+    echo -e "  ${GREEN}feat(userspace): add ARM64 cross-compilation support${NC}" >&2
+    echo -e "  ${GREEN}fix(build): resolve MAKEOBJDIRPREFIX path issues${NC}" >&2
+    echo -e "  ${GREEN}docs(readme): update installation instructions${NC}" >&2
+    echo -e "  ${GREEN}chore: update FreeBSD submodule to latest${NC}" >&2
+    echo "" >&2
+    echo -e "${YELLOW}For breaking changes, add '!' after type/scope:${NC}" >&2
+    echo -e "  ${GREEN}feat!: remove deprecated API endpoints${NC}" >&2
+    echo -e "  ${GREEN}feat(api)!: send email when product is shipped${NC}" >&2
+    echo "" >&2
+}
+
+# Skip validation for merge commits and reverts
+if [[ $commit_message =~ $merge_regex ]] || [[ $commit_message =~ $revert_regex ]]; then
+    success
+    exit 0
+fi
+
+# Check if commit message matches conventional commits format
+if [[ $commit_message =~ $commit_regex ]]; then
+    # Additional validation for first line length only
+    first_line=$(echo "$commit_message" | head -n 1)
+    if [[ ${#first_line} -gt 100 ]]; then
+        error
+        echo -e "${RED}Error: First line is too long (${#first_line} chars > 100 chars)${NC}" >&2
+        echo -e "${YELLOW}Please keep the first line under 100 characters.${NC}" >&2
+        show_format
+        exit 1
+    fi
+
+    # Check if description starts with capital letter (first line only)
+    description=$(echo "$first_line" | sed 's/^[^:]*: *//')
+    if [[ $description =~ ^[A-Z] ]]; then
+        error
+        echo -e "${RED}Error: Description should not start with a capital letter${NC}" >&2
+        echo -e "${YELLOW}Use lowercase for the description part.${NC}" >&2
+        show_format
+        exit 1
+    fi
+
+    # Check if description ends with period
+    if [[ $description =~ \.$ ]]; then
+        error
+        echo -e "${RED}Error: Description should not end with a period${NC}" >&2
+        show_format
+        exit 1
+    fi
+
+    success
+    exit 0
+else
+    error
+    echo -e "${RED}Error: Commit message does not follow Conventional Commits format${NC}" >&2
+    show_format
+    exit 1
+fi

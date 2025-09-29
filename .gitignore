@@ -1,0 +1,26 @@
+# Build artifacts
+obj/
+dist/
+
+# Temporary files
+*.tmp
+*.log
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Backup files
+*~
+*.bak
+
+# Git commit template (don't ignore, but track)
+# .gitmessage
+
+# Conventional Commits tools
+node_modules/
+.commitizen.json
+.cz.json

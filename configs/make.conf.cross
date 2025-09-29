@@ -1,0 +1,15 @@
+# make.conf.cross - Configuration for FreeBSD cross-compilation
+#
+# This file optimizes the cross-compilation process for different
+# architectures, especially useful for compiling on macOS.
+
+# === BASIC CONFIGURATION ===
+
+# Optimization flags
+CFLAGS+= -O2
+CXXFLAGS+= -O2
+
+# === DEBUG CONFIGURATION ===
+
+# Disable debug for production builds
+WITHOUT_DEBUG_FILES=yes

@@ -1,0 +1,39 @@
+# Conventional Commit Message Template
+#
+# Format: <type>[optional scope]: <description>
+#
+# [optional body]
+#
+# [optional footer(s)]
+#
+# Types:
+# - feat: A new feature
+# - fix: A bug fix
+# - docs: Documentation only changes
+# - style: Changes that do not affect the meaning of the code
+# - refactor: A code change that neither fixes a bug nor adds a feature
+# - perf: A code change that improves performance
+# - test: Adding missing tests or correcting existing tests
+# - build: Changes that affect the build system or external dependencies
+# - ci: Changes to our CI configuration files and scripts
+# - chore: Other changes that don't modify src or test files
+# - revert: Reverts a previous commit
+#
+# Examples:
+# feat(userspace): add ARM64 cross-compilation support
+# fix(build): resolve MAKEOBJDIRPREFIX path issues
+# docs(readme): update installation instructions
+# chore(deps): update FreeBSD submodule to latest
+#
+# Breaking changes:
+# feat!: remove deprecated API endpoints
+# feat(api)!: send an email to the customer when a product is shipped
+#
+# The body should include the motivation for the change and contrast this
+# with previous behavior.
+#
+# The footer should contain any information about Breaking Changes and is
+# also the place to reference GitHub issues that this commit Closes.
+#
+# Breaking Changes should start with the word BREAKING CHANGE: with a space
+# or two newlines. The rest of the commit message is then used for this.

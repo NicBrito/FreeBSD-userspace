@@ -1,0 +1,30 @@
+# Commitizen configuration for Conventional Commits
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$version"
+version_files = [
+    "README.md"
+]
+
+[tool.commitizen.settings]
+# Allowed commit types
+allowed_types = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "refactor",
+    "revert",
+    "style",
+    "test"
+]
+
+# Additional configurations
+bump_message = "chore(release): bump version to $new_version"
+changelog_file = "CHANGELOG.md"
+changelog_incremental = true
+changelog_start_rev = "v1.0.0"
