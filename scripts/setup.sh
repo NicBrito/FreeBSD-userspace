@@ -77,7 +77,7 @@ setup_macos() {
 
     # Install necessary dependencies
     msg "Installing dependencies via Homebrew..."
-    brew install gmake git || warn "Failed to install some dependencies (they may already be installed)"
+    brew install make git || warn "Failed to install some dependencies (they may already be installed)"
 
     success "macOS dependencies configured"
 }
@@ -115,13 +115,13 @@ setup_submodule() {
 
     # Check if .gitmodules already exists
     if [ ! -f ".gitmodules" ]; then
-        msg "Adding FreeBSD repository as submodule..."
-        git submodule add https://github.com/freebsd/freebsd-src.git freebsd-src
+        msg "Adding FreeBSD repository as submodule (shallow clone for efficiency)..."
+        git submodule add --depth 1 https://github.com/freebsd/freebsd-src.git freebsd-src
     fi
 
-    # Initialize and update submodules
+    # Initialize and update submodules (shallow)
     msg "Initializing and updating submodules..."
-    git submodule update --init --recursive
+    git submodule update --init --depth 1
 
     success "FreeBSD submodule configured"
 }

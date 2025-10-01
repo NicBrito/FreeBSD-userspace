@@ -30,10 +30,10 @@ The FreeBSD userspace includes:
 ### macOS
 ```bash
 # Install dependencies via Homebrew
-brew install gmake git
+brew install make git
 ```
 
-### FreeBSD/Linux
+### Linux
 ```bash
 # Install dependencies (example for Ubuntu/Debian)
 sudo apt-get install build-essential git
@@ -62,19 +62,19 @@ cd FreeBSD-userspace
 FreeBSD-userspace/
 ├── build.sh                    # Main build script
 ├── scripts/                    # Auxiliary scripts
-│   ├── setup.sh               # Initial setup
-│   ├── clean.sh               # Build cleanup
-│   ├── validate.sh            # Environment/results validation
-│   └── setup-hooks.sh         # Git hooks configuration
-├── freebsd-src/               # Official FreeBSD repository submodule
-├── configs/                   # Specific configurations
-├── .githooks/                 # Git hooks for Conventional Commits
-│   ├── commit-msg             # Commit format validation
-│   └── README.md             # Hooks documentation
-├── .gitmessage               # Commit template
-├── obj/                       # Intermediate build objects
-├── dist/                      # Extracted userspace (result)
-└── docs/                      # Detailed documentation
+│   ├── setup.sh                # Initial setup
+│   ├── clean.sh                # Build cleanup
+│   ├── validate.sh             # Environment/results validation
+│   └── setup-hooks.sh          # Git hooks configuration
+├── freebsd-src/                # Official FreeBSD repository submodule
+├── configs/                    # Specific configurations
+├── .githooks/                  # Git hooks for Conventional Commits
+│   ├── commit-msg              # Commit format validation
+│   └── README.md               # Hooks documentation
+├── .gitmessage                 # Commit template
+├── obj/                        # Intermediate build objects
+├── dist/                       # Extracted userspace (result)
+└── docs/                       # Detailed documentation
 ```
 
 ## Result
