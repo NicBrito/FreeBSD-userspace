@@ -1,18 +1,21 @@
-# Contributing to FreeBSD-userspace
+# 🤝 Contributing to FreeBSD-userspace
 
-## Conventional Commits
+> **Welcome!** This guide will help you contribute effectively to the project using our standardized workflow.
 
-This project follows the [Conventional Commits](https://www.conventionalcommits.org/) specification to standardize commit messages.
+---
 
-### Setup
+## 📋 Conventional Commits
 
-Before making commits, configure the validation hooks:
+We follow [Conventional Commits](https://www.conventionalcommits.org/) to maintain a clean, readable git history that enables automated changelog generation.
+
+### 🔧 Quick Setup
 
 ```bash
+# Enable automatic commit validation
 ./scripts/setup-hooks.sh
 ```
 
-### Format
+### 📝 Commit Format
 
 ```
 <type>[optional scope]: <description>
@@ -22,104 +25,105 @@ Before making commits, configure the validation hooks:
 [optional footer]
 ```
 
-### Allowed Types
+### 🏷️ Commit Types
 
-- **feat**: New feature
-- **fix**: Bug fix
-- **docs**: Documentation changes only
-- **style**: Changes that don't affect the meaning of the code (formatting, etc.)
-- **refactor**: Code refactoring that neither adds functionality nor fixes bugs
-- **perf**: Changes that improve performance
-- **test**: Adding tests or correcting existing tests
-- **build**: Changes that affect the build system or dependencies
-- **ci**: Changes to CI configuration
-- **chore**: Other changes that don't modify src or test files
-- **revert**: Reverts a previous commit
+| Type | Purpose | Example |
+|------|---------|---------|
+| `feat` | New features | `feat(build): add parallel compilation` |
+| `fix` | Bug fixes | `fix(script): resolve path resolution` |
+| `docs` | Documentation | `docs: update installation guide` |
+| `style` | Code formatting | `style: fix indentation` |
+| `refactor` | Code restructuring | `refactor(build): simplify script logic` |
+| `perf` | Performance improvements | `perf: optimize memory usage` |
+| `test` | Testing | `test: add build validation tests` |
+| `build` | Build system | `build: update dependencies` |
+| `ci` | CI/CD changes | `ci: add automated testing` |
+| `chore` | Maintenance | `chore: update gitignore` |
+| `revert` | Revert changes | `revert: undo feature X` |
 
-### Examples
+## 🚀 Making Commits
 
-```bash
-# Features
-feat(userspace): add ARM64 cross-compilation support
-feat(build): add parallel compilation optimization
-
-# Fixes
-fix(scripts): resolve path resolution in setup.sh
-fix(build): handle missing dependencies gracefully
-
-# Documentation
-docs(readme): update installation instructions
-docs: add architecture documentation
-
-# Breaking Changes
-feat!: remove support for legacy build system
-feat(api)!: change configuration file format
-
-BREAKING CHANGE: The configuration format has changed from JSON to YAML.
-```
-
-### Helper Scripts
-
-#### Assisted Commit
-
-Use the `commit.sh` script to make commits easily:
+### Option 1: Assisted Commit (Recommended)
 
 ```bash
 # Format: ./scripts/commit.sh <type> [scope] <description>
-./scripts/commit.sh feat userspace "add ARM64 support"
-./scripts/commit.sh fix build "resolve dependency issue"
-./scripts/commit.sh docs "update README"
-./scripts/commit.sh chore "update dependencies"
+./scripts/commit.sh feat build "add ARM64 optimization"
+./scripts/commit.sh fix script "resolve dependency issue"
+./scripts/commit.sh docs "update README structure"
 ```
 
-#### Manual Commit
-
-Or use git directly (will be automatically validated):
+### Option 2: Manual Commit
 
 ```bash
-git commit -m "feat(userspace): add new feature"
+# Direct git commit (automatically validated)
+git commit -m "feat(userspace): add new component extraction"
 ```
 
-### Automatic Validation
-
-The `commit-msg` hook automatically validates:
-
-1. ✅ **Format**: Must follow `<type>[scope]: <description>`
-2. ✅ **Valid types**: Only recognized types
-3. ✅ **Length**: Maximum 100 characters on first line
-4. ✅ **Style**: Lowercase description, no period at end
-5. ✅ **Breaking changes**: Correct format with `!`
-
-### Commits That Will Be Rejected
+### Option 3: Interactive Mode
 
 ```bash
-❌ "Add new feature"                    # No type
-❌ "feat: Add new feature"              # Uppercase description
-❌ "feat: add new feature."             # Period at end
-❌ "feature: add new feature"           # Invalid type
-❌ "feat(userspace): this is way too long description that exceeds maximum"
+# Install commitizen for interactive prompts
+pip install commitizen
+cz commit
 ```
 
-### Commit Template
+## ✅ Validation Rules
 
-When using `git commit` (without `-m`), an editor will open with a template that includes:
+Our commit hook validates:
 
-- Format explanation
+| Rule | Description | Example |
+|------|-------------|---------|
+| **Format** | Must follow conventional format | ✅ `feat: add feature` |
+| **Type** | Must use valid commit types | ❌ `feature: add feature` |
+| **Length** | Max 100 characters on first line | ❌ Long descriptions |
+| **Style** | Lowercase, no ending period | ❌ `feat: Add feature.` |
+| **Breaking** | Proper format for breaking changes | ✅ `feat!: breaking change` |
+
+### ❌ Common Mistakes
+
+```bash
+❌ "Add new feature"              # Missing type
+❌ "feat: Add new feature"        # Uppercase description
+❌ "feat: add new feature."       # Period at end
+❌ "feature: add new feature"     # Invalid type
+❌ "feat: this description is way too long and exceeds the maximum allowed length"
+```
+
+## 🔧 Breaking Changes
+
+For commits that introduce breaking changes:
+
+```bash
+# Method 1: Use ! after type
+feat!: remove legacy build system support
+
+# Method 2: Add footer
+feat(api): change configuration format
+
+BREAKING CHANGE: Configuration format changed from JSON to YAML.
+```
+
+## 🎯 Commit Template
+
+When using `git commit` without `-m`, an editor opens with a helpful template including:
+- Format explanation and examples
 - List of valid types
-- Practical examples
 - Guidelines for breaking changes
 
-### Additional Tools
+## 📊 Additional Tools
 
-The project includes configuration for [Commitizen](https://commitizen-tools.github.io/commitizen/):
-
+### Changelog Generation
 ```bash
-# Install commitizen (optional)
-pip install commitizen
-
-# Make interactive commit
-cz commit
-
-# Generate automatic changelog
+# Generate automatic changelog (requires commitizen)
 cz changelog
 ```
+
+### Version Bumping
+```bash
+# Automatically bump version based on commits
+cz bump
+```
+
+---
+
+> 💡 **Tip**: The project uses [commitizen](https://commitizen-tools.github.io/commitizen/) configuration in `pyproject.toml` for advanced features.

@@ -1,152 +1,256 @@
-# Architecture Guide - FreeBSD-userspace
+# 🏗️ Architecture Guide - FreeBSD-userspace
 
-## Architecture Overview
+> **Technical deep dive** into the project structure, build flow, and design decisions
 
-The FreeBSD-userspace project was designed with a modular and clean architecture, following FreeBSD build best practices and software development standards.
+---
 
-## Directory Structure
+## 🎯 Overview
 
-### Root Directory
+FreeBSD-userspace is architected with **modularity**, **cleanliness**, and **FreeBSD best practices** at its core. The design enables reproducible, cross-platform builds while maintaining the integrity of the official FreeBSD codebase.
+
+## 📁 Project Structure
+
+### 🗂️ Root Level
 ```
 FreeBSD-userspace/
-├── README.md              # Main documentation
-├── build.sh               # Main build script
-├── .gitignore            # Git ignored files
-└── .gitmodules           # Submodule configuration
+├── 📄 README.md           # Main documentation
+├── 🔧 build.sh            # Primary build orchestrator
+├── 📋 pyproject.toml      # Project configuration & commitizen
+├── 🤝 CONTRIBUTING.md     # Contribution guidelines
+├── 🙈 .gitignore          # Git exclusions
+└── 🔗 .gitmodules         # Submodule configuration
 ```
 
-### Scripts (`scripts/`)
-Auxiliary scripts for automation:
-- `setup.sh`: Initial environment setup
-- `clean.sh`: Build and artifacts cleanup
-- `validate.sh`: Environment and results validation
+### 🛠️ Automation (`scripts/`)
+Essential automation toolkit:
 
-### Source Code (`freebsd-src/`)
-Official FreeBSD repository submodule:
-- **Origin**: https://github.com/freebsd/freebsd-src
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `setup.sh` | Environment initialization | `./scripts/setup.sh` |
+| `clean.sh` | Build artifacts cleanup | `./scripts/clean.sh` |
+| `validate.sh` | Build result verification | `./scripts/validate.sh` |
+| `setup-hooks.sh` | Git hooks configuration | `./scripts/setup-hooks.sh` |
+| `commit.sh` | Assisted commit creation | `./scripts/commit.sh feat "description"` |
+
+### 🔗 Source Code (`freebsd-src/`)
+**Official FreeBSD Repository Integration**
+
 - **Type**: Git submodule
+- **Origin**: [freebsd/freebsd-src](https://github.com/freebsd/freebsd-src)
 - **Advantages**:
-  - Always synchronized with official repository
-  - Facilitates updates
-  - Maintains complete history
+  - ✅ Always synchronized with official repository
+  - ✅ Simplified updates and version tracking
+  - ✅ Complete build history preservation
+  - ✅ Zero modifications to upstream code
 
-### Configurations (`configs/`)
-Optimized configuration files:
-- `src.conf.minimal`: Minimal configuration to reduce components
-- `make.conf.cross`: Configuration for cross-compilation
+### ⚙️ Configuration (`configs/`)
+Build optimization files:
 
-### Build Artifacts
-- `obj/`: Intermediate compilation objects (generated automatically)
-- `dist/`: Extracted userspace - final result (generated automatically)
+| File | Purpose | Impact |
+|------|---------|--------|
+| `src.conf.minimal` | Component reduction | Smaller builds, faster compilation |
+| `make.conf.cross` | Cross-compilation settings | Multi-architecture support |
 
-### Documentation (`docs/`)
-Detailed technical documentation of the project.
+### 🏗️ Build Artifacts
+| Directory | Content | Lifecycle |
+|-----------|---------|-----------|
+| `obj/` | Intermediate compilation objects | Auto-generated, cleanable |
+| `dist/` | Final extracted userspace | Auto-generated, deployable |
 
-## Build Flow
+### 📚 Documentation (`docs/`)
+Technical documentation and guides.
 
-### 1. Initialization
+## 🔄 Build Flow
+
+### 🚀 Phase 1: Initialization
 ```bash
 ./scripts/setup.sh
 ```
-- Detects operating system
-- Installs necessary dependencies
-- Configures submodules
-- Creates directory structure
 
-### 2. Compilation
+**Actions performed**:
+- 🔍 **OS Detection**: Identifies host platform (macOS/Linux)
+- 📦 **Dependency Installation**: Installs required build tools
+- 🔗 **Submodule Setup**: Initializes and updates FreeBSD source
+- 📁 **Directory Creation**: Prepares build workspace
+
+### ⚙️ Phase 2: Compilation
 ```bash
 ./build.sh [architecture]
 ```
-- Defines environment variables
-- Executes `buildworld` (compiles userspace)
-- Executes `installworld` (installs to destination)
 
-### 3. Validation
+**Build process**:
+1. **Environment Setup**
+   - Sets `MAKEOBJDIRPREFIX` for out-of-source builds
+   - Configures cross-compilation variables
+   - Validates BSD make availability
+
+2. **World Build** (`buildworld`)
+   - Compiles entire FreeBSD userspace
+   - Uses parallel jobs for optimization
+   - Applies minimal configuration if available
+
+3. **World Install** (`installworld`)
+   - Installs userspace to destination directory
+   - Maintains proper file permissions and structure
+
+### ✅ Phase 3: Validation
 ```bash
-./scripts/validate.sh build
+./scripts/validate.sh
 ```
-- Verifies userspace structure
-- Validates essential binaries
-- Confirms result integrity
 
-## Userspace Components
+**Verification steps**:
+- 🔍 **Structure Validation**: Confirms userspace directory layout
+- 🔬 **Binary Testing**: Validates essential executable functionality
+- 🧪 **Integrity Checks**: Ensures build completeness and consistency
 
-### Essential Binaries (`bin/`, `sbin/`)
-- **bin/**: Basic commands (`ls`, `cp`, `mv`, `cat`, `sh`, etc.)
-- **sbin/**: Administration commands (`mount`, `umount`, `fsck`, etc.)
+## 📦 Userspace Components
 
-### User Utilities (`usr/bin/`, `usr/sbin/`)
-- **usr/bin/**: Advanced tools (`grep`, `awk`, `sed`, `tar`, etc.)
-- **usr/sbin/**: System utilities (`cron`, `syslogd`, etc.)
+### 🔧 Core Binaries
+| Directory | Purpose | Key Examples |
+|-----------|---------|--------------|
+| `bin/` | Essential commands | `ls`, `cp`, `mv`, `cat`, `sh`, `chmod` |
+| `sbin/` | System administration | `mount`, `umount`, `fsck`, `newfs` |
 
-### Libraries (`lib/`, `usr/lib/`)
-- System libraries (libc, libm, etc.)
-- Shared libraries
-- Development files
+### 👤 User Tools
+| Directory | Purpose | Key Examples |
+|-----------|---------|--------------|
+| `usr/bin/` | User utilities | `grep`, `awk`, `sed`, `tar`, `gzip` |
+| `usr/sbin/` | Advanced admin tools | `cron`, `syslogd`, `ntpd` |
 
-### Shared Resources (`usr/share/`)
-- Manual pages
-- Localization data
-- Timezones
-- Configuration templates
+### 📚 Libraries & Headers
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `lib/`, `usr/lib/` | Runtime libraries | `libc`, `libm`, shared objects |
+| `usr/include/` | Development headers | System APIs, data structures |
 
-### Headers (`usr/include/`)
-- System headers
-- Public APIs
-- Structure definitions
+### 📄 Shared Resources
+| Directory | Purpose | Contents |
+|-----------|---------|----------|
+| `usr/share/` | Common data | Manual pages, locales, timezones, templates |
 
-## Optimization Strategies
+## 🚀 Optimization Strategies
 
-### 1. Out-of-Source Build
-- Compiled objects in separate `obj/` from source code
-- Enables clean and parallel builds
-- Facilitates cleanup and maintenance
+### 1. 🏗️ Out-of-Source Builds
+- **Separation**: Compiled objects in `obj/` separate from source code
+- **Benefits**: Clean builds, easy cleanup, parallel development
+- **Implementation**: `MAKEOBJDIRPREFIX` environment variable
 
-### 2. Minimal Configurations
-- Removes unnecessary components (kernel, boot, docs)
-- Reduces compilation time
-- Decreases final userspace size
+### 2. 📦 Minimal Configurations
+- **Purpose**: Remove unnecessary components (kernel, docs, legacy tools)
+- **Impact**:
+  - ⏱️ **Faster compilation** (reduced build time)
+  - 💾 **Smaller footprint** (reduced storage requirements)
+  - 🎯 **Focused output** (only essential userspace)
 
-### 3. Cross-Compilation
-- Native support for multiple architectures
-- Platform-specific optimizations
-- Compatibility with different host systems
+### 3. 🔀 Cross-Compilation Support
+- **Multi-Architecture**: Native ARM64 and x86_64 support
+- **Host Independence**: Build on macOS/Linux for any target
+- **Optimization**: Platform-specific compiler flags and settings
 
-### 4. Parallelization
-- Parallel builds using multiple cores
-- Automatic system capacity detection
-- Compilation flag optimization
+### 4. ⚡ Parallel Processing
+- **Auto-Detection**: Uses all available CPU cores (`sysctl -n hw.ncpu`)
+- **Make Jobs**: Parallel compilation with `-j${NUM_JOBS}`
+- **Efficiency**: Dramatically reduces build time on multi-core systems
 
-## Best Practices
+## 🎯 Best Practices
 
-### 1. Versioning
-- Use Git tags for stable versions
-- Keep submodule synchronized
-- Document significant changes
+### 📏 Versioning & Release Management
+| Practice | Implementation | Benefit |
+|----------|---------------|---------|
+| **Semantic Versioning** | Git tags (`v1.0.0`) | Clear version tracking |
+| **Submodule Sync** | Regular FreeBSD updates | Security & feature updates |
+| **Changelog** | Automated via commitizen | Transparent change tracking |
 
-### 2. Testing
-- Always run validation after builds
-- Test on different architectures
-- Verify binary integrity
+### 🧪 Testing & Validation
+| Level | Method | Coverage |
+|-------|--------|----------|
+| **Build Testing** | Multiple architectures | Cross-platform compatibility |
+| **Binary Validation** | Essential command testing | Functional verification |
+| **Integration Testing** | Full userspace validation | End-to-end functionality |
 
-### 3. Maintenance
-- Clean old builds regularly
-- Update submodules periodically
-- Monitor disk space
+### 🧹 Maintenance & Hygiene
+| Task | Frequency | Command |
+|------|-----------|---------|
+| **Cleanup** | After builds | `./scripts/clean.sh` |
+| **Updates** | Monthly | `git submodule update --remote` |
+| **Disk Monitoring** | Regular | `du -sh obj/ dist/` |
 
-## Extensibility
+## 🔧 Extensibility
 
-### Adding New Architectures
-1. Add support in `build.sh`
-2. Create specific configurations in `configs/`
-3. Test and validate the result
+### 🏛️ Adding New Architectures
 
-### Customizing Components
-1. Modify `configs/src.conf.minimal`
-2. Adjust flags in `configs/make.conf.cross`
-3. Document the changes
+1. **Update Build Script**
+   ```bash
+   # Edit build.sh - add new architecture case
+   case "$target_arch" in
+       "riscv64")
+           target_arch="riscv64"
+           target_arch_param="riscv64"
+           ;;
+   ```
 
-### Integrating with CI/CD
-1. Use automated scripts
-2. Implement automatic validation
-3. Configure parallel builds per architecture
+2. **Architecture-Specific Configuration**
+   - Create `configs/make.conf.riscv64` if needed
+   - Add any special build flags or requirements
+
+3. **Testing & Validation**
+   - Test build process thoroughly
+   - Update validation scripts if necessary
+   - Document any architecture-specific requirements
+
+### ⚙️ Customizing Components
+
+1. **Modify Minimal Configuration**
+   ```bash
+   # Edit configs/src.conf.minimal
+   WITHOUT_GAMES=YES           # Remove games
+   WITHOUT_EXAMPLES=YES        # Remove examples
+   WITHOUT_DOCS=YES            # Remove documentation
+   ```
+
+2. **Cross-Compilation Flags**
+   ```bash
+   # Edit configs/make.conf.cross
+   CFLAGS+=-O2 -pipe           # Optimization flags
+   CXXFLAGS+=-O2 -pipe         # C++ optimization
+   ```
+
+3. **Document Changes**
+   - Update relevant documentation
+   - Add configuration rationale
+   - Include performance impact notes
+
+### 🚀 CI/CD Integration
+
+1. **Automated Builds**
+   ```yaml
+   # Example GitHub Actions workflow
+   - name: Build ARM64 Userspace
+     run: ./build.sh arm64
+
+   - name: Build x86_64 Userspace
+     run: ./build.sh amd64
+   ```
+
+2. **Validation Pipeline**
+   ```bash
+   # Automated validation
+   ./scripts/validate.sh build
+   ./scripts/validate.sh integrity
+   ```
+
+3. **Multi-Architecture Matrix**
+   - Parallel builds for all supported architectures
+   - Automated testing and validation
+   - Artifact collection and distribution
+
+---
+
+## 🔗 Related Documentation
+
+- 📖 **[Main README](../README.md)** - Project overview and quick start
+- 🤝 **[Contributing Guide](../CONTRIBUTING.md)** - Development workflow and standards
+- 🔧 **[Build Script](../build.sh)** - Main build orchestrator
+- ⚙️ **[Setup Script](../scripts/setup.sh)** - Environment initialization
+
+> 💡 **Need help?** Check the [official FreeBSD build documentation](https://docs.freebsd.org/en/books/handbook/cutting-edge/) for advanced build system details.
